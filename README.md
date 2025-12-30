@@ -36,6 +36,8 @@ A estrutura de dados mais fundamental. No C#, arrays são objetos alocados na He
 
 ```csharp
 public void ExemploArray()
+
+
 {
     // Declaração e Alocação na Memória
     int[] pontuacoes = new int[5] { 10, 20, 30, 40, 50 };
@@ -180,3 +182,43 @@ filaBanco.Enqueue("Cliente B");
 string atendimento = filaBanco.Dequeue(); // Retorna "Cliente A"
 
 ```
+---
+
+## 6. Listas Encadeadas (`LinkedList<T>`)
+
+Enquanto Arrays e Listas (`List<T>`) armazenam dados de forma **contígua** (lado a lado na memória), a Lista Encadeada armazena cada item em um lugar diferente da memória. Cada item (chamado de **Nó**) possui uma referência (ponteiro) para o próximo.
+
+No C#, a `LinkedList<T>` é **duplamente encadeada**: cada nó sabe quem é o próximo (`Next`) e quem é o anterior (`Previous`).
+
+### Características
+* **Alocação Dispersa:** Os itens não precisam estar juntos na memória.
+* **Inserção/Remoção Eficiente:** Adicionar ou remover itens no *meio* da lista não exige o deslocamento (shift) dos demais elementos. Basta atualizar as referências.
+* **Sem Acesso Indexado:** Você **não** pode fazer `lista[10]`. É necessário percorrer a lista nó por nó até chegar ao destino.
+
+### Análise de Performance
+
+Comparação direta com a `List<T>` (Array Dinâmico):
+
+| Operação | LinkedList | List (Array) | Vencedor |
+| :--- | :---: | :---: | :--- |
+| **Acesso Aleatório** (`[i]`) | **N/A** ($O(n)$) | **$O(1)$** | **List** 🏆 |
+| **Inserir no Início/Fim** | **$O(1)$** | $O(1)$* | **Empate** |
+| **Inserir no Meio** | **$O(1)$*** | $O(n)$ | **LinkedList** 🏆 |
+| **Remover do Meio** | **$O(1)$*** | $O(n)$ | **LinkedList** 🏆 |
+| **Custo de Memória** | **Alto** (Dados + 2 referências) | **Baixo** (Apenas dados) | **List** 🏆 |
+
+*\* Nota: A operação de inserir/remover na LinkedList é O(1) **somente se** você já tiver a referência do nó (`LinkedListNode`) onde a alteração ocorrerá. Se precisar buscar o nó primeiro, você paga o custo da busca ($O(n)$).*
+
+### Quando usar?
+Use `LinkedList` quando você tem um cenário de **muitas inserções e remoções no meio da coleção** (ex: editor de texto, histórico de navegador) e não precisa acessar itens por posição específica (índice).
+
+### Exemplo em C#
+
+```csharp
+LinkedList<string> playlist = new LinkedList<string>();
+playlist.AddLast("Música 1");
+playlist.AddLast("Música 3");
+
+// Inserir "Música 2" no meio é barato, pois não desloca o resto.
+var noMusica1 = playlist.Find("Música 1");
+playlist.AddAfter(noMusica1, "Música 2");
